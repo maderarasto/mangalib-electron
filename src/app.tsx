@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "./store/useAuth";
 import { supabase } from "./lib/supabase";
 import { Spinner } from "./components/shadcn/spinner";
+import { LibraryScreen } from "./screens/library";
+import { AuthScreen } from "./screens/auth/auth";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +17,7 @@ export default function App() {
     });
 
     const {data} = supabase.auth.onAuthStateChange((_, session) => {
+      console.log(window.location);
       setSession(session);
     });
 
@@ -31,5 +34,7 @@ export default function App() {
     );
   }
 
-  return null;
+  return !!session 
+    ? <LibraryScreen /> 
+    : <AuthScreen />;
 }
