@@ -37,6 +37,8 @@ function createWindow() {
 		},
 	});
 
+	win.setMinimumSize(1280, 720);	
+
 	// Test active push message to Renderer-process.
 	win.webContents.on("did-finish-load", () => {
 		win?.webContents.send("main-process-message", new Date().toLocaleString());
