@@ -27,7 +27,7 @@ export const SignIn: React.FC<SignInProps> = ({
     formState: { isSubmitting },
     setError
   } = formMethods;
-
+  
   const onSubmit = async (values: SignInValues) => {
     const response = await supabase.auth.signInWithPassword(values);
     
@@ -70,6 +70,15 @@ export const SignIn: React.FC<SignInProps> = ({
                   name="password"
                   type="password"
                 />
+                <div className="flex justify-end">
+                  <Button
+                    className="px-0 text-muted-foreground"
+                    onClick={() => onChangeAuthScreen?.('ResetPassword')}
+                    variant="link"
+                  >
+                    Forgotten password?
+                  </Button>
+                </div>
               </FieldSet>
               <div className="flex flex-col gap-2">
                 <Button>
