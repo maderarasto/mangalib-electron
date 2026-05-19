@@ -2,6 +2,7 @@ import { Plus } from "lucide-react"
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem } from "./shadcn/breadcrumb"
 import { Button } from "./shadcn/button"
 import { SidebarTrigger } from "./shadcn/sidebar"
+import { UserButton } from "./UserButton"
 
 export const TopBar: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ export const TopBar: React.FC = () => {
             New Volume
           </span>
         </Button>
+        <UserButton />
       </div>
     </nav>
   )
