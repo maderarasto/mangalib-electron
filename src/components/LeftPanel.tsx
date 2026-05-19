@@ -1,10 +1,12 @@
 import React from "react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarSeparator } from "./shadcn/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarSeparator, useSidebar } from "./shadcn/sidebar";
 import logo from '@/assets/logo.png';
 import { Plus, Search } from "lucide-react";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "./shadcn/input-group";
 
 export const LeftPanel: React.FC = () => {
+  const {open: isOpen} = useSidebar();
+
   const handleAddCollection = () => {
 
   }
@@ -13,19 +15,23 @@ export const LeftPanel: React.FC = () => {
     <Sidebar collapsible="icon">
       <SidebarHeader className="flex flex-row items-center">
         <img src={logo} alt="logo" width={32} height={32} />
-        <h1 className="font-bold text-xl text-slate-700 dark:text-white">Manga Library</h1>
+        {isOpen && (
+          <h1 className="font-bold text-xl text-slate-700 dark:text-white">Manga Library</h1>
+        )}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <InputGroup>
-                <InputGroupInput placeholder="Search in collections..." />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {isOpen && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <InputGroup>
+                  <InputGroupInput placeholder="Search in collections..." />
+                  <InputGroupAddon>
+                    <Search />
+                  </InputGroupAddon>
+                </InputGroup>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         <SidebarGroup className="flex-1">
           <SidebarGroupLabel className="uppercase">
             Your collections
@@ -45,16 +51,18 @@ export const LeftPanel: React.FC = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarSeparator />
-        <SidebarGroup className="h-1/3">
-          <SidebarGroupLabel className="uppercase">
-            Shopping List
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className="flex justify-center items-center py-2">
-              <span className="text-xs text-gray-500">No added items yet.</span>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {isOpen && (
+          <SidebarGroup className="h-1/3">
+            <SidebarGroupLabel className="uppercase">
+              Shopping List
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <div className="flex justify-center items-center py-2">
+                <span className="text-xs text-gray-500">No added items yet.</span>
+              </div>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );
