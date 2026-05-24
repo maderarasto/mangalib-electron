@@ -24,6 +24,6 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true
 	},
-	"include": ["src", "electron", "./test.global.d.ts"],
+	"include": ["src", "supabase", "electron", "./test.global.d.ts"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }

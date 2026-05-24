@@ -3,13 +3,10 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import logo from '@/assets/logo.png';
 import { Plus, Search } from "lucide-react";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "./shadcn/input-group";
+import { PopoverCollectionForm } from "./PopoverCollectionForm";
 
 export const LeftPanel: React.FC = () => {
   const {open: isOpen} = useSidebar();
-
-  const handleAddCollection = () => {
-
-  }
 
   return (
     <Sidebar collapsible="icon">
@@ -38,12 +35,16 @@ export const LeftPanel: React.FC = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="mb-2">
-              <SidebarMenuButton className="flex flex-1 flex-row gap-3 cursor-pointer" onClick={handleAddCollection}>
-                <div className="flex flex-1 items-center gap-3 text-gray-500">
-                  <Plus size={20} />
-                  <span>New Collection</span>
-                </div>
-              </SidebarMenuButton>
+              <PopoverCollectionForm
+                trigger={(
+                  <SidebarMenuButton className="flex flex-1 flex-row gap-3 cursor-pointer">
+                    <div className="flex flex-1 items-center gap-3 text-gray-500">
+                      <Plus size={20} />
+                      <span>New Collection</span>
+                    </div>
+                  </SidebarMenuButton>
+                )}
+              />
             </SidebarMenu>
             <SidebarMenu>
 
