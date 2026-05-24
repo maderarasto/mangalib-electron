@@ -80,3 +80,9 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer utilities {
+	.slim-scrollbar {
+		@apply [&::-webkit-scrollbar]:appearance-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:hover:bg-gray-400;
+	}
+}
