@@ -9,6 +9,34 @@ export const createCollectionSchema = z.object({
 });
 export type CreateCollectionData = z.infer<typeof createCollectionSchema>;
 
+const getCollections = async (
+  req: Request,
+  params: RouteParams,
+  ctx: SupabaseContext<Database>
+): Promise<Response> => {
+  const { data: collections, error } = await ctx.supabase
+    .from('collections')
+    .select('*')
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching collections:', error);
+    return errorResponse({ type: 'internal_error' });
+  }
+
+  const dateFormatter = new Intl.DateTimeFormat('en-CA');    
+
+  return Response.json({
+    data: {
+      collections: collections?.map((collection) => ({
+        ...collection,
+        created_at: collection.created_at ? dateFormatter.format(new Date(collection.created_at)) : null,
+        updated_at: collection.updated_at ? dateFormatter.format(new Date(collection.updated_at)) : null,
+      })) ?? [],
+    }
+  });
+}
+
 const createCollection = async (
   req: Request,
   params: RouteParams,
@@ -64,5 +92,6 @@ const createCollection = async (
 }
 
 export const routes = () => ({
+  '[GET]:/collections': getCollections,
   '[POST]:/collections': createCollection,
 })
