@@ -7,6 +7,7 @@ import { PopoverCollectionForm } from "./PopoverCollectionForm";
 import { useCollectionsQuery } from "@/hooks/query/useCollections";
 import { useCollectionsStore } from "@/store/useCollections";
 import { CollectionMenuItem } from "./CollectionMenuItem";
+import { Skeleton } from "./shadcn/skeleton";
 
 export const LeftPanel: React.FC = () => {
   const collections = useCollectionsStore((state) => state.collections);
@@ -15,7 +16,10 @@ export const LeftPanel: React.FC = () => {
   const setActiveCollectionId = useCollectionsStore((state) => state.setActiveCollectionId);
 
   const {open: isOpen} = useSidebar();
-  const {data} = useCollectionsQuery();
+  const {
+    data,
+    isFetching,
+  } = useCollectionsQuery();
 
   useEffect(() => {
     setCollections(data?.collections || []);
@@ -60,7 +64,7 @@ export const LeftPanel: React.FC = () => {
           </SidebarMenu>
           <div className="flex-1 min-h-0 pr-2 overflow-y-auto slim-scrollbar">
             <SidebarMenu>
-              {collections.map((collection) => (
+              {!isFetching && collections.map((collection) => (
                 <CollectionMenuItem
                   key={collection.id}
                   collection={collection}
@@ -68,6 +72,9 @@ export const LeftPanel: React.FC = () => {
                   onClick={() => setActiveCollectionId(collection.id)}
                 />
               ))}
+              {isFetching && (
+                <Skeleton className="w-full h-9 rounded-md" />
+              )}
             </SidebarMenu>
           </div>
         </SidebarGroup>
