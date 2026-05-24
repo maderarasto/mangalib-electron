@@ -31,4 +31,6 @@ export const useAuthStore = create<AuthState>()(
       }),
     })
   )
-)
+);
+
+export const getSession = () => useAuthStore.getState().session;
