@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarSeparator, useSidebar } from "./shadcn/sidebar";
 import logo from '@/assets/logo.png';
 import { Plus, Search } from "lucide-react";

@@ -4,10 +4,16 @@ import { RouteParams, validateData } from "../utils.ts";
 import { Database } from '../../_shared/database.types.ts';
 import { errorResponse } from "../errors.ts";
 
-export const createCollectionSchema = z.object({
-  name: z.string({ message: "Name is required" }).min(1, "Name is required"),
+const createCollectionSchema = z.object({
+  name: z.string({ message: "Name is required" }).min(1, "Name cannot be empty"),
 });
-export type CreateCollectionData = z.infer<typeof createCollectionSchema>;
+
+const updateCollectionSchema = z.object({
+  name: z.string().min(1, "Name cannot be empty").optional(),
+});
+
+type CreateCollectionData = z.infer<typeof createCollectionSchema>;
+type UpdateCollectionData = z.infer<typeof updateCollectionSchema>;
 
 const getCollections = async (
   req: Request,
@@ -42,7 +48,7 @@ const createCollection = async (
   params: RouteParams,
   ctx: SupabaseContext<Database>
 ): Promise<Response> => {
-  const { name } = await req.json();
+  const { name }: CreateCollectionData = await req.json();
   
   const user = await ctx.supabase.auth.getUser();
 
@@ -91,7 +97,49 @@ const createCollection = async (
   });
 }
 
+const updateCollection = async (
+  req: Request,
+  params: RouteParams,
+  ctx: SupabaseContext<Database>
+): Promise<Response> => {
+  const { data: collection } = await ctx.supabase
+    .from('collections')
+    .select('*')
+    .eq('id', params['id'])
+    .limit(1)
+    .single();
+
+  if (!collection) {
+    return errorResponse({
+      type: 'not_found',
+      message: `Collection with id ${params['id']} not found.`
+    });
+  }
+
+  const data: UpdateCollectionData = await req.json();
+  const { success, errors } = validateData(createCollectionSchema, data);
+  
+  if (!success) {
+    return errorResponse({ 
+      type: 'validation_error', 
+      message: 'Invalid request data', 
+      data: errors
+    });
+  }
+
+  const result = await ctx.supabase
+    .from('collections')
+    .update(data)
+
+  return Response.json({
+    data: {
+      message: 'Collection updated successfully.'
+    }
+  });
+}
+
 export const routes = () => ({
   '[GET]:/collections': getCollections,
   '[POST]:/collections': createCollection,
+  '[PUT]:/collections/:id': updateCollection,
 })

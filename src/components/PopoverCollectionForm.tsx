@@ -80,7 +80,7 @@ export const PopoverCollectionForm: React.FC<PopoverCollectionFormProps> = ({
   }
 
   return (
-    <Popover open={isOpen} onOpenChange={handleOpenChange}> 
+    <Popover open={isOpen} onOpenChange={handleOpenChange} modal> 
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverContent side="bottom" className="ml-6 p-3 space-y-4">
         <div>

@@ -4,6 +4,11 @@ export type BaseArgs = Record<string, unknown>;
 export type CreateCollectionArgs = {
   name: string;
 };
+
+export type UpdateCollectionArgs = {
+  id: string;
+  name?: string;
+}
 // #endregion
 
 // #region Common
@@ -24,4 +29,9 @@ export type CreateCollectionResponse = {
   success: boolean;
   message: string;
 };
+
+export type UpdateCollectionResponse = {
+  success: boolean;
+  message: string;
+}
 // #endregion
