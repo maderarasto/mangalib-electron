@@ -75,6 +75,7 @@ export const SignIn: React.FC<SignInProps> = ({
                     className="px-0 text-muted-foreground"
                     onClick={() => onChangeAuthScreen?.('ResetPassword')}
                     variant="link"
+                    type="button"
                   >
                     Forgotten password?
                   </Button>
@@ -82,7 +83,7 @@ export const SignIn: React.FC<SignInProps> = ({
               </FieldSet>
               <div className="flex flex-col gap-2">
                 <Button>
-                  {isSubmitting ? (<Spinner color="white" />): 'Sign In'}
+                  {isSubmitting ? (<Spinner color="white" />) : 'Sign In'}
                 </Button>
                 <Button 
                   onClick={handleSignInWithGoogle}

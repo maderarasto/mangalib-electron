@@ -3,7 +3,6 @@ import { SidebarMenuButton } from "./shadcn/sidebar";
 import { Library, SquareLibrary } from "lucide-react";
 import clsx from "clsx";
 import { CollectionContextMenu, CollectionContextMenuItem } from "./CollectionContextMenu";
-import { PopoverCollectionForm } from "./PopoverCollectionForm";
 
 type CollectionMenuItemProps = {
   collection: Collection;

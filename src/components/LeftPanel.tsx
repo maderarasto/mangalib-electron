@@ -8,12 +8,15 @@ import { useCollectionsQuery } from "@/hooks/query/useCollections";
 import { useCollectionsStore } from "@/store/useCollections";
 import { CollectionMenuItem } from "./CollectionMenuItem";
 import { Skeleton } from "./shadcn/skeleton";
+import { CollectionFormDialog, CollectionFormDialogActions } from "./modals/CollectionFormDialog/CollectionFormDialog";
 
 export const LeftPanel: React.FC = () => {
   const collections = useCollectionsStore((state) => state.collections);
   const activeCollectionId = useCollectionsStore((state) => state.activeCollectionId);
   const setCollections = useCollectionsStore((state) => state.setCollections);
   const setActiveCollectionId = useCollectionsStore((state) => state.setActiveCollectionId);
+
+  const collectionFormDialogRef = useRef<CollectionFormDialogActions>(null);
 
   const {open: isOpen} = useSidebar();
   const {
@@ -51,16 +54,15 @@ export const LeftPanel: React.FC = () => {
             Your collections
           </SidebarGroupLabel>
           <SidebarMenu className="mb-2 shrink-0">
-            <PopoverCollectionForm
-              trigger={(
-                <SidebarMenuButton className="flex flex-1 flex-row gap-3 cursor-pointer">
-                  <div className="flex flex-1 items-center gap-3 text-gray-500">
-                    <Plus size={20} />
-                    <span>New Collection</span>
-                  </div>
-                </SidebarMenuButton>
-              )}
-            />
+            <SidebarMenuButton 
+              className="flex flex-1 flex-row gap-3 cursor-pointer"
+              onClick={() => collectionFormDialogRef.current?.openWith()}
+            >
+              <div className="flex flex-1 items-center gap-3 text-gray-500">
+                <Plus size={20} />
+                <span>New Collection</span>
+              </div>
+            </SidebarMenuButton>
           </SidebarMenu>
           <div className="flex-1 min-h-0 pr-2 overflow-y-auto slim-scrollbar">
             <SidebarMenu>
@@ -92,6 +94,7 @@ export const LeftPanel: React.FC = () => {
           </SidebarGroup>
         )}
       </SidebarContent>
+      <CollectionFormDialog ref={collectionFormDialogRef} />
     </Sidebar>
   );
 }
