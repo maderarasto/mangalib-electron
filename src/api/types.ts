@@ -9,6 +9,10 @@ export type UpdateCollectionArgs = {
   id: string;
   name?: string;
 }
+
+export type DeleteCollectionArgs = {
+  id: string;
+}
 // #endregion
 
 // #region Common
@@ -31,6 +35,11 @@ export type CreateCollectionResponse = {
 };
 
 export type UpdateCollectionResponse = {
+  success: boolean;
+  message: string;
+}
+
+export type DeleteCollectionResponse = {
   success: boolean;
   message: string;
 }

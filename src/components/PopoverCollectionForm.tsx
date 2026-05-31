@@ -1,6 +1,6 @@
 import { Popover, PopoverContent, PopoverTrigger } from "./shadcn/popover"
-import React, { useRef, useState } from "react"
-import { CreateCollectionValues, useCreateCollectionForm } from "@/hooks/form/useAddCollectionForm"
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react"
+import { CreateCollectionValues, useCreateCollectionForm } from "@/hooks/form/useCreateCollectionForm"
 import { FormProvider } from "react-hook-form"
 import { CircleAlert, CircleCheck, LibrarySquare } from "lucide-react"
 import { ConfirmDialog, ConfirmDialogActions, } from "./ui/ConfirmDialog"
@@ -10,15 +10,25 @@ import { ApiError } from "@/lib/errors"
 import { toast } from "sonner"
 
 type PopoverCollectionFormProps = {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
 }
 
-export const PopoverCollectionForm: React.FC<PopoverCollectionFormProps> = ({
-  trigger
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+export interface PopoverCollectionFormActions {
+  open: VoidFunction
+  close: VoidFunction
+}
 
+export const PopoverCollectionForm = forwardRef<PopoverCollectionFormActions, PopoverCollectionFormProps>(({
+  trigger
+}, ref) => {
+  const [isOpen, setIsOpen] = useState(false);
   const confirmDialogRef = useRef<ConfirmDialogActions>(null);
+
+  useImperativeHandle(ref, () => ({
+    open: () => setIsOpen(true),
+    close: () => reset(),
+  }));
+
   const formMethods = useCreateCollectionForm();
   const {
     control,
@@ -108,4 +118,4 @@ export const PopoverCollectionForm: React.FC<PopoverCollectionFormProps> = ({
       />
     </Popover>
   )
-}
+});

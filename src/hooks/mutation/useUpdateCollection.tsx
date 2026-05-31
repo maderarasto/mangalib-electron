@@ -17,6 +17,7 @@ export const useUpdateCollection = ({
   return useMutation({
     mutationFn: async (args: UpdateCollectionArgs) => {
       const { data, error } = await updateCollection(args);
+      console.log(error);
       
       if (error) {
         throw new ApiError(error.type, error.message, error.data);

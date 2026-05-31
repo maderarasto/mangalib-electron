@@ -4,12 +4,12 @@ import { Button } from "../../shadcn/button";
 import { FieldSet } from "@/components/shadcn/field";
 import { CreateCollectionForm } from "./forms/CreateCollectionForm";
 import { CreateCollectionResponse, UpdateCollectionResponse } from "@/api/types";
-import { ApiError } from "@/lib/errors";
 import { FormActions } from "./types";
 import { Spinner } from "@/components/shadcn/spinner";
 import { toast } from "sonner";
 import { CircleCheck } from "lucide-react";
 import { ConfirmDialog, ConfirmDialogActions } from "@/components/ui/ConfirmDialog";
+import { EditCollectionForm } from "./forms/EditCollectionForm";
 
 type CollectionFormDialogProps = {
 
@@ -29,10 +29,12 @@ export const CollectionFormDialog = forwardRef<CollectionFormDialogActions, Coll
   const [collectionId, setCollectionId] = useState<string|null>(null);
 
   const createFormRef = useRef<FormActions>(null);
+  const updateFormRef = useRef<FormActions>(null);
   const confirmDialogRef = useRef<ConfirmDialogActions>(null);
 
   const reset = () => {
     createFormRef.current?.reset();
+    updateFormRef?.current?.reset();
     setCollectionId(null);
     setIsOpen(false);
   }
@@ -56,9 +58,18 @@ export const CollectionFormDialog = forwardRef<CollectionFormDialogActions, Coll
 
     if (!open) {
       createFormRef.current?.reset();
+      updateFormRef?.current?.reset();
     }
 
     setIsOpen(open);
+  }
+
+  const handleSubmitClick = () => {
+    if (!collectionId) {
+      createFormRef.current?.submit();
+    } else {
+      updateFormRef.current?.submit();
+    }
   }
 
   const handleSuccess = (response: CreateCollectionResponse | UpdateCollectionResponse) => {
@@ -88,18 +99,28 @@ export const CollectionFormDialog = forwardRef<CollectionFormDialogActions, Coll
           <DialogDescription className="text-sm text-muted-foreground">{description}</DialogDescription>
         </DialogHeader>
         <FieldSet  className="mb-4">
-          <CreateCollectionForm
-            ref={createFormRef}
-            onDirtyChange={(dirty) => setIsDirty(dirty)}
-            onSubmittingChange={(submitting) => setIsSubmitting(submitting)}
-            onSuccess={handleSuccess}
-          />
+          {!collectionId ? (
+            <CreateCollectionForm
+              ref={createFormRef}
+              onDirtyChange={(dirty) => setIsDirty(dirty)}
+              onSubmittingChange={(submitting) => setIsSubmitting(submitting)}
+              onSuccess={handleSuccess}
+            />
+          ) : (
+            <EditCollectionForm
+              ref={updateFormRef}
+              collectionId={collectionId}
+              onDirtyChange={(dirty) => setIsDirty(dirty)}
+              onSubmittingChange={(submitting) => setIsSubmitting(submitting)}
+              onSuccess={handleSuccess}
+            />
+          )}
         </FieldSet>
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={() => createFormRef.current?.submit()}>
+          <Button onClick={handleSubmitClick}>
             {isSubmitting ? (<Spinner color="white" />) : submitText}
           </Button>
         </DialogFooter>

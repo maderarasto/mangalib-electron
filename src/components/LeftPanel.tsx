@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarSeparator, useSidebar } from "./shadcn/sidebar";
 import logo from '@/assets/logo.png';
-import { Plus, Search } from "lucide-react";
+import { CircleCheck, Plus, Search } from "lucide-react";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "./shadcn/input-group";
 import { PopoverCollectionForm } from "./PopoverCollectionForm";
 import { useCollectionsQuery } from "@/hooks/query/useCollections";
@@ -9,24 +9,54 @@ import { useCollectionsStore } from "@/store/useCollections";
 import { CollectionMenuItem } from "./CollectionMenuItem";
 import { Skeleton } from "./shadcn/skeleton";
 import { CollectionFormDialog, CollectionFormDialogActions } from "./modals/CollectionFormDialog/CollectionFormDialog";
+import { useDeleteCollection } from "@/hooks/mutation/useDeleteCollection";
+import { ConfirmDialog, ConfirmDialogActions } from "./ui/ConfirmDialog";
+import { toast } from "sonner";
 
 export const LeftPanel: React.FC = () => {
   const collections = useCollectionsStore((state) => state.collections);
   const activeCollectionId = useCollectionsStore((state) => state.activeCollectionId);
   const setCollections = useCollectionsStore((state) => state.setCollections);
   const setActiveCollectionId = useCollectionsStore((state) => state.setActiveCollectionId);
+  const collectionToBeDeleted = useRef('');
 
   const collectionFormDialogRef = useRef<CollectionFormDialogActions>(null);
+  const confirmDialogRef = useRef<ConfirmDialogActions>(null);
 
   const {open: isOpen} = useSidebar();
   const {
     data,
     isFetching,
   } = useCollectionsQuery();
+  const deleteCollection = useDeleteCollection();
 
   useEffect(() => {
     setCollections(data?.collections || []);
   }, [data, setCollections]);
+
+  const deleteItem = (collectionId: string) => {
+    collectionToBeDeleted.current = collectionId;
+    confirmDialogRef.current?.open();
+  }
+
+  const handleConfirm = async () => {
+    try {
+        const response = await deleteCollection.mutateAsync({ id: collectionToBeDeleted.current });
+        toast.success(response.message, {
+          duration: 10000,
+          closeButton: true,
+          icon: <CircleCheck className="size-4 text-green-500" />
+        });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      collectionToBeDeleted.current = '';
+    }
+  }
+
+  const handleCancel = () => {
+    collectionToBeDeleted.current = '';
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -72,6 +102,8 @@ export const LeftPanel: React.FC = () => {
                   collection={collection}
                   isActive={collection.id === activeCollectionId}
                   onClick={() => setActiveCollectionId(collection.id)}
+                  onDelete={() => deleteItem(collection.id)}
+                  onEdit={() => collectionFormDialogRef.current?.openWith(collection.id)}
                 />
               ))}
               {isFetching && (
@@ -95,6 +127,13 @@ export const LeftPanel: React.FC = () => {
         )}
       </SidebarContent>
       <CollectionFormDialog ref={collectionFormDialogRef} />
+      <ConfirmDialog
+        ref={confirmDialogRef}
+        closeAfterConfirm={false}
+        loading={deleteCollection.isPending}
+        onCancel={handleCancel}
+        onConfirm={handleConfirm}
+      />
     </Sidebar>
   );
 }
