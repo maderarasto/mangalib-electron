@@ -130,16 +130,53 @@ const updateCollection = async (
   const result = await ctx.supabase
     .from('collections')
     .update(data)
+    .eq('id', params['id']);
+
+  if (!result.success) {
+    console.error(result.error);
+  }
 
   return Response.json({
     data: {
+      success: result.success,
       message: 'Collection updated successfully.'
     }
   });
 }
 
+const deleteCollection = async (
+  req: Request,
+  params: RouteParams,
+  ctx: SupabaseContext<Database>
+) => {
+  const { data: collection } = await ctx.supabase
+    .from('collections')
+    .select('*')
+    .eq('id', params['id'])
+    .limit(1)
+    .single();
+
+  if (!collection) {
+    return errorResponse({
+      type: 'not_found',
+      message: `Collection with id ${params['id']} not found.`
+    });
+  }
+
+  const result = await ctx.supabase
+    .from('collections')
+    .delete()
+    .eq('id', params['id']);
+
+  return Response.json({
+    success: result.success,
+    message: 'Collection deleted successfully.'
+  });
+}
+
 export const routes = () => ({
   '[GET]:/collections': getCollections,
-  '[POST]:/collections': createCollection,
-  '[PUT]:/collections/:id': updateCollection,
+  '[POST]:/collections/create': createCollection,
+  '[POST]:/collections/:id/edit': updateCollection,
+  '[DELETE]:/collections/:id': deleteCollection
 })
