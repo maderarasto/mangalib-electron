@@ -1,6 +1,7 @@
 import z from "zod";
 
 const METHODS_WITH_BODY = ["POST", "PUT", "PATCH"];
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 export type RouteParams = Record<string, string>;
 
@@ -63,3 +64,7 @@ export const validateData = (schema: z.ZodSchema, data: unknown) => {
     errors: fieldErrors
   }
 };
+
+export const isValidUUID = (value: string): boolean => {
+  return UUID_REGEX.test(value);
+}

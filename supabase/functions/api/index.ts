@@ -6,6 +6,7 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
 import { routes as CollectionRoutes } from "./modules/collections.ts";
+import { routes as VolumeRoutes } from "./modules/volumes.ts";
 import { isRequestBodyValid, parseRouteParams, RouteParams } from "./utils.ts";
 import { errorResponse } from "./errors.ts";
 
@@ -13,6 +14,7 @@ const ROUTE_REGEX = /\[([A-Z,]+)\]:((?:\/[a-zA-Z0-9-_#:]+){1,3})/;
 
 const routes = {
   ...CollectionRoutes(),
+  ...VolumeRoutes(),
 }
 
 export default {

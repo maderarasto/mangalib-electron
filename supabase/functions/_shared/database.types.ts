@@ -38,6 +38,47 @@ export type Database = {
         }
         Relationships: []
       }
+      volumes: {
+        Row: {
+          collection_id: string
+          created_at: string | null
+          created_by: string
+          id: string
+          state: Database["public"]["Enums"]["volume_state"]
+          summary: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string | null
+          created_by: string
+          id?: string
+          state: Database["public"]["Enums"]["volume_state"]
+          summary?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          state?: Database["public"]["Enums"]["volume_state"]
+          summary?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volumes_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -46,7 +87,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      volume_state: "released" | "bought" | "reading" | "finished" | "lost"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -173,6 +214,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      volume_state: ["released", "bought", "reading", "finished", "lost"],
+    },
   },
 } as const
