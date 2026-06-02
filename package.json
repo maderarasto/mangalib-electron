@@ -67,6 +67,9 @@
     "vite-plugin-electron-renderer": "^0.14.6",
     "vitest": "^2.1.9"
   },
+  "overrides": {
+    "yauzl": "^3.3.1"
+  },
   "main": "dist-electron/main.js",
   "build": {
     "directories": {

@@ -1,9 +1,8 @@
 import { Collection } from "@/api/types";
 import { SidebarMenuButton } from "./shadcn/sidebar";
-import { Library, SquareLibrary } from "lucide-react";
+import { SquareLibrary } from "lucide-react";
 import clsx from "clsx";
 import { CollectionContextMenu, CollectionContextMenuItem } from "./CollectionContextMenu";
-import { useDeleteCollection } from "@/hooks/mutation/useDeleteCollection";
 
 type CollectionMenuItemProps = {
   collection: Collection;
@@ -20,8 +19,6 @@ export const CollectionMenuItem: React.FC<CollectionMenuItemProps> = ({
   onEdit,
   onDelete,
  }) => {
-  const deleteCollection = useDeleteCollection();
-
   const handleSelectedItem = (menuItem: CollectionContextMenuItem) => {
     if (menuItem === 'Edit') {
       onEdit?.();
