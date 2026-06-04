@@ -12,10 +12,13 @@ const queryClient = new QueryClient();
 export default function App() {
   const authUser = useAuthStore(state => state.user);
   const setAuthUser = useAuthStore(state => state.setUser);
-  const [isLoading, _] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    account.get().then(setAuthUser);
+    account.get().then((user) => {
+      setIsLoading(false);
+      setAuthUser(user);
+    });
   }, []);
 
   useRealtimeSubscription('account', ({ events }) => {
