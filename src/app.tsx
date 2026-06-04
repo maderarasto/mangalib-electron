@@ -1,33 +1,32 @@
-import { useEffect, useState } from "react";
-import { useAuthStore } from "./store/useAuth";
-import { supabase } from "./lib/supabase";
+import {useEffect, useState} from "react";
 import { Spinner } from "./components/shadcn/spinner";
 import { LibraryScreen } from "./screens/library";
 import { AuthScreen } from "./screens/auth/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import {account} from "@/lib/appwrite.ts";
+import {useRealtimeSubscription} from "@/hooks/useRealtimeSubscription.ts";
+import {useAuthStore} from "@/store/useAuthStore.ts";
 
 const queryClient = new QueryClient();
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const session = useAuthStore((state) => state.session);
-  const setSession = useAuthStore((state) => state.setSession);
+  const authUser = useAuthStore(state => state.user);
+  const setAuthUser = useAuthStore(state => state.setUser);
+  const [isLoading, _] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setIsLoading(false);
-    });
-
-    const {data} = supabase.auth.onAuthStateChange((_, session) => {
-      console.log(session);
-      setSession(session);
-    });
-
-    return () => {
-      data.subscription.unsubscribe();
-    }
+    account.get().then(setAuthUser);
   }, []);
+
+  useRealtimeSubscription('account', ({ events }) => {
+    if (events.some(e => e.includes('sessions.*.create'))) {
+      account.get().then(setAuthUser);
+    }
+
+    if (events.some(e => e.includes('sessions.*.delete'))) {
+      setAuthUser(null);
+    }
+  });
 
   if (isLoading) {
     return(
@@ -37,12 +36,14 @@ export default function App() {
     );
   }
 
-  return !!session 
-    ? (
-      <QueryClientProvider client={queryClient}>
+  return (
+    <QueryClientProvider client={queryClient}>
+      {!authUser ? (
+        <AuthScreen />
+      ) : (
         <LibraryScreen />
-        <Toaster />
-      </QueryClientProvider>
-    ) 
-    : <AuthScreen />;
+      )}
+      <Toaster />
+    </QueryClientProvider>
+  );
 }

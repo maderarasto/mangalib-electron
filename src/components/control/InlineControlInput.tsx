@@ -3,7 +3,6 @@ import { Control, Controller, FieldPath, FieldValues, useFormContext } from "rea
 import { FieldError, FieldGroup } from "../shadcn/field";
 import { AdornedInput } from "../ui/AdornedInput";
 import { AlertCircleIcon, CornerDownLeft } from "lucide-react";
-import clsx from "clsx";
 import { Spinner } from "../shadcn/spinner";
 import { Kbd } from "../shadcn/kbd";
 

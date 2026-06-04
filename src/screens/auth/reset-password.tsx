@@ -6,7 +6,6 @@ import { ResetPasswordValues, useResetPasswordForm } from "@/hooks/form/useReset
 import { ControlInput } from "@/components/control/ControlInput";
 import { Button } from "@/components/shadcn/button";
 import { Spinner } from "@/components/shadcn/spinner";
-import { supabase } from "@/lib/supabase";
 
 type ResetPasswordProps = {
   onChangeAuthScreen?: (screen: AuthNestedScreen) => void
@@ -23,15 +22,15 @@ export const ResetPassword: React.FC<ResetPasswordProps> = ({
   } = formMethods;
 
   const onSubmit = async (values: ResetPasswordValues) => {
-    const {error} = await supabase.auth.resetPasswordForEmail(values.email);
-
-    if (error) {
-      // TODO: handle global error
-      return;
-    }
-
-    // TODO: handle successful toast
-    onChangeAuthScreen?.('SignIn');
+    // const {error} = await supabase.auth.resetPasswordForEmail(values.email);
+    //
+    // if (error) {
+    //   // TODO: handle global error
+    //   return;
+    // }
+    //
+    // // TODO: handle successful toast
+    // onChangeAuthScreen?.('SignIn');
   }
 
   return (

@@ -6,8 +6,11 @@ import { ControlInput } from "@/components/control/ControlInput";
 import { FormProvider } from "react-hook-form";
 import { Button } from "@/components/shadcn/button";
 import { Spinner } from "@/components/shadcn/spinner";
-import { supabase } from "@/lib/supabase";
-import { useAuthStore } from "@/store/useAuth";
+import {account, ID} from "@/lib/appwrite.ts";
+import {AppwriteException} from "appwrite";
+import {toast} from "sonner";
+import {CircleCheck} from "lucide-react";
+import React from "react";
 
 type SignUpProps = {
   onChangeAuthScreen?: (screen: AuthNestedScreen) => void;
@@ -16,13 +19,12 @@ type SignUpProps = {
 export const SignUp: React.FC<SignUpProps> = ({
   onChangeAuthScreen
 }) => {
-  const setSession = useAuthStore((state) => state.setSession);
-  
   const formMethods = useSignUpForm();
   const { 
     control, 
     formState: { isSubmitting },
-    handleSubmit 
+    handleSubmit,
+    setError,
   } = formMethods;
 
   const onSubmit = async (values: SignUpValues) => {
@@ -32,22 +34,33 @@ export const SignUp: React.FC<SignUpProps> = ({
       ...credentials
     } = values;
 
-    const {data, error} = await supabase.auth.signUp({
-      ...credentials,
-      options: {
-        data: {
-          display_name: name
+    try {
+      await account.create({
+        userId: ID.unique(),
+        ...credentials,
+        name,
+      });
+
+      toast.success('You have successfully created your account. You can sign in now.', {
+        duration: 10000,
+        closeButton: true,
+        icon: <CircleCheck className="size-4 text-green-500" />
+      });
+
+      onChangeAuthScreen?.('SignIn');
+    } catch (error) {
+      if (error instanceof AppwriteException) {
+        if (error.type === 'user_already_exists') {
+          setError('email', { message: 'A user with given email already exists' });
+        } else if (error.message.includes("Invalid `password` param")) {
+          setError('password', { message: 'Password must be at least 8 characters long' });
+        } else {
+          console.error(error.type);
         }
+      } else {
+        console.error(error);
       }
-    });
-
-    if (error) {
-      // TODO: handle global error
-      console.error(error);
-      return;
     }
-
-    setSession(data.session);
   }
 
   return (

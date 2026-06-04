@@ -1,17 +1,18 @@
-import { Button } from "@/components/shadcn/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn/card";
-import { FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/shadcn/field";
-import { Input } from "@/components/shadcn/input";
+import {Button} from "@/components/shadcn/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/shadcn/card";
+import {FieldSet} from "@/components/shadcn/field";
 import React from "react";
 
-import type { AuthNestedScreen } from "./auth";
-import { SignInValues, useSignInForm } from "@/hooks/form/useSignInForm";
-import { Spinner } from "@/components/shadcn/spinner";
-import { Controller, FormProvider } from "react-hook-form";
-import { supabase } from "@/lib/supabase";
-import { AlertCircleIcon } from "lucide-react";
-import clsx from "clsx";
-import { ControlInput } from "@/components/control/ControlInput";
+import type {AuthNestedScreen} from "./auth";
+import {SignInValues, useSignInForm} from "@/hooks/form/useSignInForm";
+import {Spinner} from "@/components/shadcn/spinner";
+import {FormProvider} from "react-hook-form";
+import {ControlInput} from "@/components/control/ControlInput";
+import {account} from "@/lib/appwrite.ts";
+import {AppwriteException, OAuthProvider} from "appwrite";
+import {useAuthStore} from "@/store/useAuthStore.ts";
+import {toast} from "sonner";
+import {CircleCheck} from "lucide-react";
 
 type SignInProps = {
   onChangeAuthScreen?: (screen: AuthNestedScreen) => void
@@ -20,6 +21,8 @@ type SignInProps = {
 export const SignIn: React.FC<SignInProps> = ({
   onChangeAuthScreen
 }) => {
+  const setAuthUser = useAuthStore(state => state.setUser);
+
   const formMethods = useSignInForm();
   const {
     control,
@@ -29,22 +32,49 @@ export const SignIn: React.FC<SignInProps> = ({
   } = formMethods;
   
   const onSubmit = async (values: SignInValues) => {
-    const response = await supabase.auth.signInWithPassword(values);
-    
-    if (response.error?.name === 'AuthApiError') {
-      setError('email', { 
-        message: response.error.message
+    try {
+      const signedInUser = await account.get();
+
+      if (signedInUser) {
+        setAuthUser(signedInUser);
+        return;
+      }
+    } catch {}
+
+    try {
+      await account.createEmailPasswordSession({
+        ...values,
       });
-    } else if (response.error) {
-      setError('email', {
-        message: 'Something went wrong. Please try again'
+
+      const user = await account.get();
+
+      toast.success('You have been successfully signed in!', {
+        duration: 10000,
+        closeButton: true,
+        icon: <CircleCheck className="size-4 text-green-500" />
       });
+
+      setAuthUser(user);
+    } catch (error) {
+      if (error instanceof AppwriteException) {
+        if (error.type === 'general_argument_invalid') {
+          setError('email', { message: 'Invalid credentials' });
+        } else {
+          setError('email', { message: 'Something went wrong. Please try again' });
+          console.error(error);
+        }
+      } else {
+        console.error(error);
+      }
     }
   }
 
   const handleSignInWithGoogle = () => {
-    supabase.auth.signInWithOAuth({
-      provider: 'google'
+    account.createOAuth2Session({
+      provider: OAuthProvider.Google,
+      success: 'http://localhost:5173',
+      failure: 'http://localhost:5173',
+      scopes: ['account']
     });
   }
 
@@ -85,9 +115,9 @@ export const SignIn: React.FC<SignInProps> = ({
                 <Button>
                   {isSubmitting ? (<Spinner color="white" />) : 'Sign In'}
                 </Button>
-                <Button 
+                <Button
                   onClick={handleSignInWithGoogle}
-                  variant="outline" 
+                  variant="outline"
                   type="button">
                   Sign In with Google
                 </Button>
@@ -101,6 +131,7 @@ export const SignIn: React.FC<SignInProps> = ({
               className="px-0" 
               onClick={() => onChangeAuthScreen?.('SignUp')}
               variant="link"
+              type="button"
             >
               Sign Up
             </Button>
