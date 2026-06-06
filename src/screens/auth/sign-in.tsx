@@ -8,7 +8,7 @@ import {SignInValues, useSignInForm} from "@/hooks/form/useSignInForm";
 import {Spinner} from "@/components/shadcn/spinner";
 import {FormProvider} from "react-hook-form";
 import {ControlInput} from "@/components/control/ControlInput";
-import {account} from "@/lib/appwrite.ts";
+import {account, isUserSignedIn} from "@/lib/appwrite.ts";
 import {AppwriteException, OAuthProvider} from "appwrite";
 import {useAuthStore} from "@/store/useAuthStore.ts";
 import {toast} from "sonner";
@@ -32,14 +32,10 @@ export const SignIn: React.FC<SignInProps> = ({
   } = formMethods;
   
   const onSubmit = async (values: SignInValues) => {
-    try {
-      const signedInUser = await account.get();
-
-      if (signedInUser) {
-        setAuthUser(signedInUser);
-        return;
-      }
-    } catch {}
+    if (await isUserSignedIn()) {
+      setAuthUser(await account.get());
+      return;
+    }
 
     try {
       await account.createEmailPasswordSession({
@@ -103,7 +99,7 @@ export const SignIn: React.FC<SignInProps> = ({
                 <div className="flex justify-end">
                   <Button
                     className="px-0 text-muted-foreground"
-                    onClick={() => onChangeAuthScreen?.('ResetPassword')}
+                    onClick={() => {}/* onChangeAuthScreen?.('ResetPassword') */}
                     variant="link"
                     type="button"
                   >

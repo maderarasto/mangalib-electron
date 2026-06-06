@@ -9,4 +9,12 @@ client
 export const account = new Account(client);
 export const realtime = new Realtime(client);
 
+export const isUserSignedIn = async () => {
+  try {
+    return !!(await account.get());
+  } catch {
+    return false;
+  }
+}
+
 export { ID } from "appwrite";

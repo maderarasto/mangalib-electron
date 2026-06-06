@@ -4,7 +4,7 @@ import { LibraryScreen } from "./screens/library";
 import { AuthScreen } from "./screens/auth/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import {account} from "@/lib/appwrite.ts";
+import {account, isUserSignedIn} from "@/lib/appwrite.ts";
 import {useRealtimeSubscription} from "@/hooks/useRealtimeSubscription.ts";
 import {useAuthStore} from "@/store/useAuthStore.ts";
 
@@ -15,16 +15,19 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    account.get().then((user) => {
-      setIsLoading(false);
-      setAuthUser(user);
-    });
+    isUserSignedIn().then(async (signedIn) => {
+      if (!signedIn) {
+        return;
+      }
+
+      setAuthUser(await account.get());
+    }).finally(() => setIsLoading(false));
   }, []);
 
   useRealtimeSubscription('account', ({ events }) => {
-    if (events.some(e => e.includes('sessions.*.create'))) {
-      account.get().then(setAuthUser);
-    }
+    // if (events.some(e => e.includes('sessions.*.create'))) {
+    //   account.get().then(setAuthUser);
+    // }
 
     if (events.some(e => e.includes('sessions.*.delete'))) {
       setAuthUser(null);
