@@ -47,8 +47,18 @@ const sendRequest = async<T>(endpoint: string, options?: RequestInit): Promise<A
 };
 
 export const client = {
-  get: <T>(endpoint: string) => {
-    return sendRequest<T>(endpoint, { method: 'GET' });
+  get: <T>(endpoint: string, query?: BaseArgs) => {
+    let url = endpoint;
+
+    if (query) {
+      query = Object.fromEntries(Object.entries(query).filter(([_, value]) => {
+        return value != undefined;
+      }));
+
+      url += `?${new URLSearchParams(query as Record<string, string>).toString()}`;
+    }
+
+    return sendRequest<T>(url, { method: 'GET' });
   },
 
   post: <T>(endpoint: string, args?: BaseArgs) => {

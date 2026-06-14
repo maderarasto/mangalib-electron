@@ -13,6 +13,10 @@ export type UpdateCollectionArgs = {
 export type DeleteCollectionArgs = {
   id: string;
 }
+
+export type GetVolumesArgs = {
+  collectionId?: string;
+}
 // #endregion
 
 // #region Common
@@ -22,6 +26,25 @@ export type Collection = {
   created_at: string | null;
   updated_at: string | null;
 };
+
+export type VolumeState = (
+  | 'released'
+  | 'owned'
+  | 'reading'
+  | 'completed'
+  | 'lost'
+);
+
+export type Volume = {
+  id: string;
+  collection_id: string;
+  title: string;
+  summary?: string;
+  state: VolumeState;
+  created_by: string;
+  created_at: string | null;
+  updated_at: string | null;
+}
 // #endregion
 
 // #region Responses
@@ -43,4 +66,8 @@ export type DeleteCollectionResponse = {
   success: boolean;
   message: string;
 }
+
+export type GetVolumesResponse = {
+  volumes: Volume[];
+};
 // #endregion
