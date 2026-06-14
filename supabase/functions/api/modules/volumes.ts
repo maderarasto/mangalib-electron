@@ -18,7 +18,7 @@ const getVolumes = async (
 
   const collectionId = query.get('collection_id');
 
-  if (!isValidUUID(collectionId ?? '')) {
+  if (collectionId && !isValidUUID(collectionId ?? '')) {
     return errorResponse({ type: 'invalid_payload', message: 'collection_id must be a valid UUID' });
   }
 
