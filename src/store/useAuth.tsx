@@ -10,7 +10,8 @@ interface AuthState {
   reset: () => void;
 };
 
-const initialState: Partial<AuthState> = {
+type StateData = Pick<AuthState, 'session' | 'user'>;
+const initialState: Pick<AuthState, keyof StateData> = {
   session: null,
   user: null
 };

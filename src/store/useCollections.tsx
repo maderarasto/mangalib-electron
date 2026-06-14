@@ -12,7 +12,8 @@ interface CollectionsState {
   reset: () => void;
 };
 
-const initialState: Partial<CollectionsState> = {
+type StateData = Pick<CollectionsState, 'collections' | 'activeCollection' | 'activeCollectionId'>;
+const initialState: Pick<CollectionsState, keyof StateData> = {
   collections: [],
   activeCollection: null,
   activeCollectionId: null,

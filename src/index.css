@@ -81,6 +81,16 @@
 	}
 }
 
+@layer components {
+	.volume-card-wrapper {
+		@apply relative cursor-pointer transition-transform hover:scale-105 hover:shadow-lg;
+	}
+
+	.volume-card {
+		@apply flex flex-col items-center w-40 h-60 px-4 py-8 border rounded-sm bg-slate-200 dark:bg-slate-600;
+	}
+}
+
 @layer utilities {
 	.slim-scrollbar {
 		@apply [&::-webkit-scrollbar]:appearance-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:hover:bg-gray-400;

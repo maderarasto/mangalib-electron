@@ -4,7 +4,7 @@ import logo from '@/assets/logo.png';
 import { CircleCheck, Plus, Search } from "lucide-react";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "./shadcn/input-group";
 import { PopoverCollectionForm } from "./PopoverCollectionForm";
-import { useCollectionsQuery } from "@/hooks/query/useCollections";
+import { useCollectionsQuery } from "@/hooks/query/useCollectionsQuery";
 import { useCollectionsStore } from "@/store/useCollections";
 import { CollectionMenuItem } from "./CollectionMenuItem";
 import { Skeleton } from "./shadcn/skeleton";
