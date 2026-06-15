@@ -16,8 +16,8 @@ const getVolumes = async (
     return errorResponse({ type: 'unauthorized' });
   }
 
-  const collectionId = query.get('collection_id');
-
+  const collectionId = query.get('collectionId');
+  console.log('collectionId:', collectionId);
   if (collectionId && !isValidUUID(collectionId ?? '')) {
     return errorResponse({ type: 'invalid_payload', message: 'collection_id must be a valid UUID' });
   }

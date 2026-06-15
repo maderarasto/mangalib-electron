@@ -80,7 +80,10 @@ export const LeftPanel: React.FC = () => {
           </SidebarGroup>
         )}
         <SidebarGroup className="flex min-h-0 flex-1 flex-col">
-          <SidebarGroupLabel className="uppercase">
+          <SidebarGroupLabel 
+            className="uppercase cursor-pointer hover:underline" 
+            onClick={() => setActiveCollectionId(null)}
+          >
             Your collections
           </SidebarGroupLabel>
           <SidebarMenu className="mb-2 shrink-0">

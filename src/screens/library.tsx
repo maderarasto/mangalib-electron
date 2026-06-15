@@ -6,11 +6,14 @@ import { Spinner } from "@/components/shadcn/spinner";
 import { useVolumesQuery } from "@/hooks/query/useVolumesQuery";
 import { VolumeCard } from "@/components/VolumeCard";
 import { Volume } from "@/api/types";
+import { useCollectionsStore } from "@/store/useCollections";
 
 export const LibraryScreen: React.FC = () => {
   const [selectedVolumeIds, setSelectedVolumeIds] = useState<string[]>([]);
   const [activeVolumeId, setActiveVolumeId] = useState<string | null>(null);
   const [isControlDown, setIsControlDown] = useState<boolean>(false);
+
+  const activeCollectionId = useCollectionsStore((state) => state.activeCollectionId);
 
   useEffect(() => {
     const onDocumentClick = (ev: MouseEvent) => {
@@ -45,7 +48,7 @@ export const LibraryScreen: React.FC = () => {
   const {
     data: volumes,
     isFetching,
-  } = useVolumesQuery();
+  } = useVolumesQuery({ collectionId: activeCollectionId ?? undefined });
 
   const pickVolume = (volume: Volume) => {
     if (!isControlDown) {
