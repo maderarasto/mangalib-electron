@@ -52,6 +52,51 @@ const getVolumes = async (
   });
 }
 
+const getVolume = async (
+  req: Request,
+  params: RouteParams,
+  ctx: SupabaseContext<Database>
+): Promise<Response> => {
+  const { volumeId } = params;
+
+  if (!isValidUUID(volumeId)) {
+    return errorResponse({ type: 'invalid_payload', message: 'volumeId must be a valid UUID' });
+  }
+
+  const user = await ctx.supabase.auth.getUser();
+
+  if (!user.data.user) {
+    return errorResponse({ type: 'unauthorized' });
+  }
+
+  const { data: volume, error } = await ctx.supabase
+    .from('volumes')
+    .select('*, collection:collection_id (id, name)')
+    .eq('id', volumeId)
+    .eq('created_by', user.data.user.id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching volume:', error);
+    return errorResponse({ type: 'internal_error' });
+  }
+
+  if (!volume) {
+    return errorResponse({ type: 'not_found', message: 'Volume not found' });
+  }
+
+  const dateFormatter = new Intl.DateTimeFormat('en-CA');
+
+  return Response.json({
+    data: {
+      ...volume,
+      created_at: volume.created_at ? dateFormatter.format(new Date(volume.created_at)) : null,
+      updated_at: volume.updated_at ? dateFormatter.format(new Date(volume.updated_at)) : null,
+    }
+  });
+}
+
 export const routes = () => ({
   '[GET]:/volumes': getVolumes,
+  '[GET]:/volumes/:volumeId': getVolume,
 })
