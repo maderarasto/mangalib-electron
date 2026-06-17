@@ -17,6 +17,10 @@ export type DeleteCollectionArgs = {
 export type GetVolumesArgs = {
   collectionId?: string;
 }
+
+export type GetVolumeArgs = {
+  id: string;
+}
 // #endregion
 
 // #region Common
@@ -38,6 +42,7 @@ export type VolumeState = (
 export type Volume = {
   id: string;
   collection_id: string;
+  collection: Pick<Collection, 'id' | 'name'>;
   title: string;
   summary?: string;
   state: VolumeState;
@@ -70,4 +75,6 @@ export type DeleteCollectionResponse = {
 export type GetVolumesResponse = {
   volumes: Volume[];
 };
+
+export type GetVolumeResponse = Volume;
 // #endregion
