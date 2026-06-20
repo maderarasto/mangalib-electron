@@ -29,7 +29,7 @@ export default {
       'Access-Control-Allow-Headers': 'authorization, content-type',
       'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
     };
-
+    
     if (method === 'OPTIONS') {
       return new Response(null, { headers }) // preflight
     }

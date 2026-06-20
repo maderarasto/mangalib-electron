@@ -1,6 +1,5 @@
 import { SupabaseContext } from "@supabase/server";
-import z from "zod";
-import { isValidUUID, RouteParams, validateData } from "../utils.ts";
+import { isValidUUID, RouteParams } from "../utils.ts";
 import { Database } from '../../_shared/database.types.ts';
 import { errorResponse } from "../errors.ts";
 
@@ -17,7 +16,7 @@ const getVolumes = async (
   }
 
   const collectionId = query.get('collectionId');
-  console.log('collectionId:', collectionId);
+  
   if (collectionId && !isValidUUID(collectionId ?? '')) {
     return errorResponse({ type: 'invalid_payload', message: 'collection_id must be a valid UUID' });
   }
@@ -96,7 +95,42 @@ const getVolume = async (
   });
 }
 
+const deleteVolume = async (
+  req: Request,
+  params: RouteParams,
+  ctx: SupabaseContext<Database>
+) => {
+  const { volumeId } = params;
+
+  if (!isValidUUID(volumeId)) {
+    return errorResponse({ type: 'invalid_payload', message: 'volumeId must be a valid UUID' });
+  }
+
+  const user = await ctx.supabase.auth.getUser();
+  if (!user.data.user) {
+    return errorResponse({ type: 'unauthorized' });
+  }
+
+  const { success, error } = await ctx.supabase
+    .from('volumes')
+    .delete()
+    .eq('id', volumeId);
+
+  if (error) {
+    console.error('Error fetching volume:', error);
+    return errorResponse({ type: 'internal_error' });
+  }
+
+   return Response.json({
+    data: {
+      success: success,
+      message: 'Volume deleted successfully.'
+    }
+  });
+}
+
 export const routes = () => ({
   '[GET]:/volumes': getVolumes,
   '[GET]:/volumes/:volumeId': getVolume,
-})
+  '[DELETE]:/volumes/:volumeId': deleteVolume,
+});
