@@ -21,6 +21,10 @@ export type GetVolumesArgs = {
 export type GetVolumeArgs = {
   id: string;
 }
+
+export type DeleteVolumeArgs = {
+  id: string;
+}
 // #endregion
 
 // #region Common
@@ -77,4 +81,9 @@ export type GetVolumesResponse = {
 };
 
 export type GetVolumeResponse = Volume;
+
+export type DeleteVolumeResponse = {
+  success: boolean;
+  message: string;
+}
 // #endregion
