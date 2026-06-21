@@ -46,6 +46,7 @@ const getVolumes = async (
         ...volume,
         created_at: volume.created_at ? dateFormatter.format(new Date(volume.created_at)) : null,
         updated_at: volume.updated_at ? dateFormatter.format(new Date(volume.updated_at)) : null,
+        published_at: volume.published_at ? dateFormatter.format(new Date(volume.published_at)) : null,
       })) ?? [],
     }
   });
@@ -91,6 +92,7 @@ const getVolume = async (
       ...volume,
       created_at: volume.created_at ? dateFormatter.format(new Date(volume.created_at)) : null,
       updated_at: volume.updated_at ? dateFormatter.format(new Date(volume.updated_at)) : null,
+      published_at: volume.published_at ? dateFormatter.format(new Date(volume.published_at)) : null
     }
   });
 }
