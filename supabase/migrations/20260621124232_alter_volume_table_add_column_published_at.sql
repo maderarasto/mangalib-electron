@@ -1,0 +1,1 @@
+alter table volumes add column published_at timestamptz;

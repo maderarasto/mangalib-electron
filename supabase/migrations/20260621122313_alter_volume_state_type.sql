@@ -1,0 +1,1 @@
+alter type volume_state add value 'not ready' before 'published';

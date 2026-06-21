@@ -1,0 +1,1 @@
+alter table volumes alter column state set default 'not ready';
