@@ -6,6 +6,7 @@ import { LibraryScreen } from "./screens/library";
 import { AuthScreen } from "./screens/auth/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "./components/shadcn/tooltip";
 
 const queryClient = new QueryClient();
 export default function App() {
@@ -40,8 +41,10 @@ export default function App() {
   return !!session 
     ? (
       <QueryClientProvider client={queryClient}>
-        <LibraryScreen />
-        <Toaster />
+        <TooltipProvider>
+          <LibraryScreen />
+          <Toaster />
+        </TooltipProvider>
       </QueryClientProvider>
     ) 
     : <AuthScreen />;

@@ -22,6 +22,14 @@ export type GetVolumeArgs = {
   id: string;
 }
 
+export type UpdateVolumeArgs = {
+  id: string;
+  title?: string;
+  summary?: string;
+  state?: VolumeState
+  published_at?: string;
+}
+
 export type DeleteVolumeArgs = {
   id: string;
 }
@@ -35,13 +43,23 @@ export type Collection = {
   updated_at: string | null;
 };
 
-export type VolumeState = (
-  | 'released'
-  | 'owned'
-  | 'reading'
-  | 'completed'
-  | 'lost'
-);
+export enum VolumeState {
+  NotReady = 'not ready',
+  Published = 'published',
+  Owned = 'owned',
+  Reading = 'reading',
+  Completed = 'completed',
+  Lost = 'lost',
+};
+
+// export type VolumeState = (
+//   | 'not ready'
+//   | 'published'
+//   | 'owned'
+//   | 'reading'
+//   | 'completed'
+//   | 'lost'
+// );
 
 export type Volume = {
   id: string;
@@ -53,6 +71,7 @@ export type Volume = {
   created_by: string;
   created_at: string | null;
   updated_at: string | null;
+  published_at: string|null;
 }
 // #endregion
 
@@ -81,6 +100,11 @@ export type GetVolumesResponse = {
 };
 
 export type GetVolumeResponse = Volume;
+
+export type UpdateVolumeResponse = {
+  success: boolean;
+  message: string;
+}
 
 export type DeleteVolumeResponse = {
   success: boolean;

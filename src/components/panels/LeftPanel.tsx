@@ -1,16 +1,16 @@
 import React, { useEffect, useRef } from "react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarSeparator, useSidebar } from "./shadcn/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarSeparator, useSidebar } from "../shadcn/sidebar";
 import logo from '@/assets/logo.png';
 import { CircleCheck, Plus, Search } from "lucide-react";
-import { InputGroup, InputGroupInput, InputGroupAddon } from "./shadcn/input-group";
-import { PopoverCollectionForm } from "./PopoverCollectionForm";
+import { InputGroup, InputGroupInput, InputGroupAddon } from "../shadcn/input-group";
+import { PopoverCollectionForm } from "../PopoverCollectionForm";
 import { useCollectionsQuery } from "@/hooks/query/useCollectionsQuery";
 import { useCollectionsStore } from "@/store/useCollections";
-import { CollectionMenuItem } from "./CollectionMenuItem";
-import { Skeleton } from "./shadcn/skeleton";
-import { CollectionFormDialog, CollectionFormDialogActions } from "./modals/CollectionFormDialog/CollectionFormDialog";
+import { CollectionMenuItem } from "../CollectionMenuItem";
+import { Skeleton } from "../shadcn/skeleton";
+import { CollectionFormDialog, CollectionFormDialogActions } from "../modals/CollectionFormDialog/CollectionFormDialog";
 import { useDeleteCollection } from "@/hooks/mutation/useDeleteCollection";
-import { ConfirmDialog, ConfirmDialogActions } from "./ui/ConfirmDialog";
+import { ConfirmDialog, ConfirmDialogActions } from "../ui/ConfirmDialog";
 import { toast } from "sonner";
 
 export const LeftPanel: React.FC = () => {

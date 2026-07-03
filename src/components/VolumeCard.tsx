@@ -9,24 +9,29 @@ type VolumeCardProps = {
   active?: boolean;
   onClick?: () => void;
   selected?: boolean;
+  size?: 'medium' | 'large';
+  pointerEvents?: boolean;
 };
 
 export const VolumeCard: React.FC<VolumeCardProps> = ({ 
-  active = false,
+  active,
   volume,
   onClick,
-  selected = true,
+  selected,
+  size = 'medium',
+  pointerEvents = true,
 }) => {
   
 
   return (
-    <div className="volume-card-wrapper" onClick={onClick}>
+    <div className={cn('volume-card-wrapper', !pointerEvents && 'pointer-events-none')} onClick={onClick}>
       <VolumeCover 
         className={cn(
           active ? 'ring-2 ring-emerald-500 dark:ring-emerald-700' : '',
           selected ? 'ring-2 ring-slate-600 dark:ring-white' : ''
         )}
         title={volume.title} 
+        size={size}
       />
       <Badge 
         className="absolute left-2 bottom-2 border border-gray-300"

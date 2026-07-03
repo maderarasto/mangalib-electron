@@ -43,7 +43,7 @@ export const parseRouteParams = (urlPath: string, routePath: string, params: Rou
   return true;
 }
 
-export const validateData = (schema: z.ZodSchema, data: unknown) => {
+export const validateData = <Data>(schema: z.ZodObject<z.ZodRawShape>, data: Data) => {
   const { success, error} = schema.safeParse(data);
 
   if (success || !error) {

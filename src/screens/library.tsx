@@ -1,5 +1,5 @@
 import { SidebarProvider } from "@/components/shadcn/sidebar";
-import { LeftPanel } from "@/components/LeftPanel";
+import { LeftPanel } from "@/components/panels/LeftPanel";
 import React, { useEffect, useState } from "react";
 import { TopBar } from "@/components/TopBar";
 import { Spinner } from "@/components/shadcn/spinner";
@@ -7,6 +7,7 @@ import { useVolumesQuery } from "@/hooks/query/useVolumesQuery";
 import { VolumeCard } from "@/components/VolumeCard";
 import { Volume } from "@/api/types";
 import { useCollectionsStore } from "@/store/useCollections";
+import { RightPanel, RightPanelActions } from "@/components/panels/RightPanel";
 
 export const LibraryScreen: React.FC = () => {
   const [selectedVolumeIds, setSelectedVolumeIds] = useState<string[]>([]);
@@ -14,6 +15,7 @@ export const LibraryScreen: React.FC = () => {
   const [isControlDown, setIsControlDown] = useState<boolean>(false);
 
   const activeCollectionId = useCollectionsStore((state) => state.activeCollectionId);
+  const rightPanelRef = React.useRef<RightPanelActions>(null);
 
   useEffect(() => {
     const onDocumentClick = (ev: MouseEvent) => {
@@ -53,6 +55,7 @@ export const LibraryScreen: React.FC = () => {
   const pickVolume = (volume: Volume) => {
     if (!isControlDown) {
       setActiveVolumeId(volume.id);
+      rightPanelRef.current?.openWith(volume.id);
       return;
     }
 
@@ -63,6 +66,10 @@ export const LibraryScreen: React.FC = () => {
 
       return prevSelectedVolumeIds.filter((id) => id !== volume.id);
     });
+  }
+
+  const handleRightPanelClose = () => {
+    setActiveVolumeId(null);
   }
 
   return (
@@ -91,6 +98,7 @@ export const LibraryScreen: React.FC = () => {
           )}
         </div>
       </div>
+      <RightPanel ref={rightPanelRef} onClose={handleRightPanelClose} />
     </SidebarProvider>
   );
 }

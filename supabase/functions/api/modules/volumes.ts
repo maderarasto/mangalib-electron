@@ -1,7 +1,17 @@
 import { SupabaseContext } from "@supabase/server";
-import { isValidUUID, RouteParams } from "../utils.ts";
+import { isValidUUID, RouteParams, validateData } from "../utils.ts";
 import { Database } from '../../_shared/database.types.ts';
 import { errorResponse } from "../errors.ts";
+import z from "zod";
+
+const updateVolumeSchema = z.object({
+  title: z.string().min(1).optional(),
+  summary: z.string().optional(),
+  state: z.enum(['not ready', 'published', 'owned', 'reading', 'completed', 'lost']).optional(),
+  published_at: z.string().optional(),
+});
+
+type UpdateVolumeData = z.infer<typeof updateVolumeSchema>;
 
 const getVolumes = async (
   req: Request,
@@ -97,6 +107,64 @@ const getVolume = async (
   });
 }
 
+const updateVolume = async (
+  req: Request,
+  params: RouteParams,
+  ctx: SupabaseContext<Database>
+) => {
+  const { volumeId } = params;
+
+  if (!isValidUUID(volumeId)) {
+    return errorResponse({ type: 'invalid_payload', message: 'volumeId must be a valid UUID' });
+  }
+
+  const user = await ctx.supabase.auth.getUser();
+  if (!user.data.user) {
+    return errorResponse({ type: 'unauthorized' });
+  }
+
+  const { data: volume } = await ctx.supabase
+    .from('volumes')
+    .select('*')
+    .eq('id', volumeId)
+    .limit(1)
+    .single();
+
+  if (!volume) {
+    return errorResponse({
+      type: 'not_found',
+      message: `Volume with id ${volumeId} not found.`
+    });
+  }
+
+  const data: UpdateVolumeData = await req.json();
+  const { success, errors } = validateData<UpdateVolumeData>(updateVolumeSchema, data);
+
+  if (!success) {
+    return errorResponse({ 
+      type: 'validation_error', 
+      message: 'Invalid request data', 
+      data: errors
+    });
+  }
+
+  const result = await ctx.supabase
+    .from('volumes')
+    .update(data)
+    .eq('id', volumeId);
+
+  if (!result.success) {
+    console.error(result.error);
+  }
+
+  return Response.json({
+    data: {
+      success: result.success,
+      message: 'Volume updated successfully.'
+    }
+  });
+}
+
 const deleteVolume = async (
   req: Request,
   params: RouteParams,
@@ -134,5 +202,6 @@ const deleteVolume = async (
 export const routes = () => ({
   '[GET]:/volumes': getVolumes,
   '[GET]:/volumes/:volumeId': getVolume,
+  '[POST]:/volumes/:volumeId/edit': updateVolume,
   '[DELETE]:/volumes/:volumeId': deleteVolume,
 });
