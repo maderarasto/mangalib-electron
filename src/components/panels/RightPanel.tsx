@@ -1,15 +1,14 @@
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../shadcn/sheet";
+import React, { useImperativeHandle, useRef, useState } from "react";
+import { Sheet, SheetContent } from "../shadcn/sheet";
 import { useVolumeQuery } from "@/hooks/query/useVolumeQuery";
-import { VolumeCard } from "../VolumeCard";
-import { VolumeCover } from "../VolumeCover";
 import { VolumePreview } from "../VolumePreview";
-import { VolumePreviewSkeleton } from "../VolumePreviewSkeleton";
 import { ConfirmDialog, ConfirmDialogActions } from "../ui/ConfirmDialog";
 import { useDeleteVolume } from "@/hooks/mutation/useDeleteVolume";
 import { toast } from "sonner";
 import { CircleCheck, XIcon } from "lucide-react";
 import { VolumeHeader } from "../VolumeHeader";
+
+type InteractOutsideEvent = CustomEvent<{ originalEvent: PointerEvent | FocusEvent }>;
 
 type RightPanelProps = {
   onClose?: () => void;
@@ -89,25 +88,36 @@ export const RightPanel = React.forwardRef<RightPanelActions, RightPanelProps>((
     volumeToBeDeleted.current = '';
   }
 
+  const handleInteractOutside = (ev: InteractOutsideEvent) => {
+    if (document.querySelector('div[data-radix-popper-content-wrapper]')) {
+      ev.preventDefault();
+    }
+  }
+
   return (
     <div className="right-panel">
-      <Sheet onOpenChange={handleOpenChange} open={isOpen}>
-        <SheetContent className="p-0 border-0 outline-none select-none" showCloseButton={false} autoFocus={false}>
+      <Sheet onOpenChange={handleOpenChange} modal open={isOpen}>
+        <SheetContent
+          onInteractOutside={handleInteractOutside}
+          autoFocus={false}
+          className="flex flex-col gap-0 p-0 border-0 outline-none select-none bg-gray-50" 
+          showCloseButton={false}
+        >
           <VolumeHeader isLoading={isFetching} volume={volume} />
           <VolumePreview
             isLoading={isFetching}
             onDelete={() => deleteItem(volume?.id ?? '')}
             volume={volume}
           />
+          <ConfirmDialog
+            ref={confirmDialogRef}
+            closeAfterConfirm={false}
+            loading={deleteVolume.isPending}
+            onCancel={handleCancel}
+            onConfirm={handleConfirm}
+          />
         </SheetContent>
       </Sheet>
-      <ConfirmDialog
-        ref={confirmDialogRef}
-        closeAfterConfirm={false}
-        loading={deleteVolume.isPending}
-        onCancel={handleCancel}
-        onConfirm={handleConfirm}
-      />
     </div>
   )
 });

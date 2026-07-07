@@ -1,7 +1,7 @@
 import { Volume, VolumeState } from "@/api/types";
 import { SheetFooter } from "./shadcn/sheet";
 import { Button } from "./shadcn/button";
-import { Edit2Icon, EditIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { Edit2Icon, EditIcon, PlusIcon, ShoppingCartIcon, TrashIcon } from "lucide-react";
 import dayjs from 'dayjs';
 import { SimpleTooltip } from "./ui/SimpleTooltip";
 import { useUpdateVolumeMutation } from "@/hooks/mutation/useUpdateVolume";
@@ -11,6 +11,7 @@ import { VolumeDetailCard } from "./VolumeDetailCard";
 import { VolumeStateDropdown } from "./VolumeStateDropdown";
 import { toast } from "sonner";
 import { useState } from "react";
+import { CalendarPopover } from "./ui/CalendarPopover";
 
 type VolumePreviewProps = {
   isLoading?: boolean;
@@ -18,7 +19,7 @@ type VolumePreviewProps = {
   volume?: Volume;
 }
 
-type UpdatedProperty = 'state' | 'pages' | 'chapters' | null;
+type UpdatedProperty = 'state' | 'published_at' | null;
 
 export const VolumePreview: React.FC<VolumePreviewProps> = ({ 
   isLoading,
@@ -71,37 +72,71 @@ export const VolumePreview: React.FC<VolumePreviewProps> = ({
     }
   }
 
+  const handleSelectDate = async (date: Date) => {
+    const formattedDate = dayjs(date).format('YYYY-MM-DD');
+
+    if (!volume || volume.published_at === formattedDate) {
+      return;
+    }
+
+    setUpdatedProperty('published_at');
+
+    try {
+      await updateVolume.mutateAsync({ id: volume.id, published_at: formattedDate });
+      toast.success('Volume published date updated successfully');
+    } catch (error) {
+      console.error('Error updating volume published date:', error);
+      toast.error('Failed to update volume published date');
+    } finally {
+      setUpdatedProperty(null);
+    }
+  }
+
   if (isLoading) {
     return (
       <VolumePreviewSkeleton />
     )
   }
-  
+
   return (
     <>
-      <div className="flex flex-col gap-10 px-4 py-4">
+      <div className="flex flex-1 flex-col gap-8 p-4 overflow-y-auto">
         <div className="space-y-4">
           <div className="space-y-1">
             <span className="font-semibold uppercase">Genres</span>
             <div className="flex gap-1">
-              <Badge>Action</Badge>
-              <Badge>Adventure</Badge>
-              <Badge>Comedy</Badge>
+              <Badge className="bg-slate-300 text-slate-700 hover:bg-slate-300">Action</Badge>
+              <Badge className="bg-slate-300 text-slate-700 hover:bg-slate-300">Adventure</Badge>
+              <Badge className="bg-slate-300 text-slate-700 hover:bg-slate-300">Comedy</Badge>
             </div>
           </div>
 
-          <div className="flex justify-between items-center gap-4">
-            <span className="font-semibold uppercase">Status</span>
-            <div className="flex items-center gap-2">
-              <Badge>{volume?.state}</Badge>
-              {/* <Edit2Icon 
-                className="size-4 stroke-slate-700 cursor-pointer hover:stroke-black"
-              /> */}
-              <VolumeStateDropdown
-                currentState={volume?.state as VolumeState}
-                isLoading={isUpdatePending('state')}
-                onSelect={handleSelectState}
-              />
+          <div className="space-y-1">
+            <div className="flex justify-between items-center gap-4">
+              <span className="font-semibold uppercase">Status</span>
+              <div className="flex items-center gap-2">
+                <Badge>{volume?.state}</Badge>
+                {/* <Edit2Icon 
+                  className="size-4 stroke-slate-700 cursor-pointer hover:stroke-black"
+                /> */}
+                <VolumeStateDropdown
+                  currentState={volume?.state as VolumeState}
+                  isLoading={isUpdatePending('state')}
+                  onSelect={handleSelectState}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center gap-4">
+              <span className="font-semibold uppercase">Published</span>
+              <div className="flex items-center gap-2">
+                <span>{formattedPublishedAt}</span>
+                <CalendarPopover
+                  isLoading={isUpdatePending('published_at')}
+                  onSelectDate={handleSelectDate}
+                  selectedDate={volume?.published_at ? dayjs(volume.published_at).toDate() : undefined}
+                />
+              </div>
             </div>
           </div>
 
@@ -113,22 +148,41 @@ export const VolumePreview: React.FC<VolumePreviewProps> = ({
 
         <div className="grid grid-cols-2 gap-4">
           <VolumeDetailCard 
-            isLoading={isUpdatePending('pages')}
             label="pages" 
             value="122" 
-            editable 
-            onChange={(value) => updateVolumeDetail('pages', value)}
           />
           <VolumeDetailCard 
-            isLoading={isUpdatePending('chapters')}
             label="chapters" 
             value="110-120" 
-            editable 
-            onChange={(value) => updateVolumeDetail('chapters', value)}
           />
         </div>
       </div>
-      <SheetFooter>
+      <SheetFooter className="p-4">
+        <div className="flex flex-col gap-2 w-full">
+          <Button 
+            className="w-full" 
+            icon={<ShoppingCartIcon />}
+          >
+            Add to your shopping list
+          </Button>
+          <div className="flex items-center gap-2 w-full">
+            <Button 
+              className="w-full bg-slate-300 hover:bg-slate-200" 
+              icon={<Edit2Icon />}
+              variant="secondary"
+            >
+              Edit details
+            </Button>
+            <Button 
+              className="w-full" 
+              icon={<TrashIcon />}
+              onClick={onDelete}
+              variant="destructive" 
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
       </SheetFooter>
     </>
   )

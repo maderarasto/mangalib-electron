@@ -1,4 +1,4 @@
-import { forwardRef, MouseEvent, MouseEventHandler, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, MouseEvent, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../shadcn/alert-dialog";
 import { Spinner } from "../shadcn/spinner";
 
@@ -57,6 +57,10 @@ export const ConfirmDialog = forwardRef<ConfirmDialogActions, ConfirmDialogProps
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
+
+    if (!open) {
+      onCancel?.();
+    }
   }
 
   const handleConfirmClick = (ev: MouseEvent<HTMLButtonElement>) => {

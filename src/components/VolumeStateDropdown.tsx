@@ -26,7 +26,7 @@ export const VolumeStateDropdown: React.FC<VolumeStateDropdownProps> = ({
           <Edit2Icon size={16} />
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="mt-1 mr-3">
         {states.map((state) => (
           <DropdownMenuItem 
             key={state}
