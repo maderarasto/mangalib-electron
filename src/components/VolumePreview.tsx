@@ -101,49 +101,42 @@ export const VolumePreview: React.FC<VolumePreviewProps> = ({
   return (
     <>
       <div className="flex flex-1 flex-col gap-8 p-4 overflow-y-auto">
+        <div className="space-y-2">
+          <span className="font-semibold uppercase">Genres</span>
+          <div className="flex gap-1">
+            <Badge>Action</Badge>
+            <Badge>Adventure</Badge>
+            <Badge>Comedy</Badge>
+          </div>
+        </div>
         <div className="space-y-4">
-          <div className="space-y-1">
-            <span className="font-semibold uppercase">Genres</span>
-            <div className="flex gap-1">
-              <Badge className="bg-slate-300 text-slate-700 hover:bg-slate-300">Action</Badge>
-              <Badge className="bg-slate-300 text-slate-700 hover:bg-slate-300">Adventure</Badge>
-              <Badge className="bg-slate-300 text-slate-700 hover:bg-slate-300">Comedy</Badge>
-            </div>
+          <div className="flex items-center justify-between gap-4">
+          <span className="font-semibold uppercase">Status</span>
+          <div className="flex items-center justify-start gap-2">
+            <Badge className="capitalize">{volume?.state}</Badge>
+            <VolumeStateDropdown
+              currentState={volume?.state as VolumeState}
+              isLoading={isUpdatePending('state')}
+              onSelect={handleSelectState}
+            />
           </div>
-
-          <div className="space-y-1">
-            <div className="flex justify-between items-center gap-4">
-              <span className="font-semibold uppercase">Status</span>
-              <div className="flex items-center gap-2">
-                <Badge>{volume?.state}</Badge>
-                {/* <Edit2Icon 
-                  className="size-4 stroke-slate-700 cursor-pointer hover:stroke-black"
-                /> */}
-                <VolumeStateDropdown
-                  currentState={volume?.state as VolumeState}
-                  isLoading={isUpdatePending('state')}
-                  onSelect={handleSelectState}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center gap-4">
-              <span className="font-semibold uppercase">Published</span>
-              <div className="flex items-center gap-2">
-                <span>{formattedPublishedAt}</span>
-                <CalendarPopover
-                  isLoading={isUpdatePending('published_at')}
-                  onSelectDate={handleSelectDate}
-                  selectedDate={volume?.published_at ? dayjs(volume.published_at).toDate() : undefined}
-                />
-              </div>
-            </div>
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <span className="font-semibold uppercase">Published</span>
+          <div className="flex items-center justify-start gap-2">
+            <span>{formattedPublishedAt}</span>
+            <CalendarPopover
+              isLoading={isUpdatePending('published_at')}
+              onSelectDate={handleSelectDate}
+              selectedDate={volume?.published_at ? dayjs(volume.published_at).toDate() : undefined}
+            />
           </div>
+        </div>
+        </div>
 
-          <div className="space-y-1">
-            <span className="font-semibold uppercase">Summary</span>
-            <p className="text-[0.95rem] leading-snug">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quidem quas tenetur maiores nulla eligendi dolores obcaecati, explicabo, cumque velit consectetur cupiditate ipsa ullam dolorem dolorum! Omnis pariatur natus quam accusantium porro obcaecati exercitationem, quae voluptas unde ex ipsam tempore ab rem fuga at repellendus veritatis repudiandae sint autem dolor numquam.</p>
-          </div>
+        <div className="space-y-2">
+          <span className="font-semibold uppercase">Summary</span>
+          <p className="text-[0.95rem] leading-snug">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quidem quas tenetur maiores nulla eligendi dolores obcaecati, explicabo, cumque velit consectetur cupiditate ipsa ullam dolorem dolorum! Omnis pariatur natus quam accusantium porro obcaecati exercitationem, quae voluptas unde ex ipsam tempore ab rem fuga at repellendus veritatis repudiandae sint autem dolor numquam.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

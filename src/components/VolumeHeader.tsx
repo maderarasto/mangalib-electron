@@ -16,7 +16,7 @@ export const VolumeHeader: React.FC<VolumeHeaderProps> = ({
   volume
 }) => {
   return (
-    <SheetHeader className="relative flex gap-4 p-4 space-y-0">
+    <SheetHeader className="relative flex gap-8 p-4 space-y-0">
       <VolumeHeaderBackground />
       <div className="flex justify-between items-center w-full">
         <SheetTitle className="leading-none">Volume Details</SheetTitle>
