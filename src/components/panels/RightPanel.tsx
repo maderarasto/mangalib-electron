@@ -100,7 +100,7 @@ export const RightPanel = React.forwardRef<RightPanelActions, RightPanelProps>((
         <SheetContent
           onInteractOutside={handleInteractOutside}
           autoFocus={false}
-          className="flex flex-col gap-0 p-0 border-0 outline-none select-none bg-gray-100" 
+          className="flex flex-col gap-0 p-0 border-0 outline-none select-none bg-gray-100 overflow-hidden" 
           showCloseButton={false}
         >
           <VolumeHeader isLoading={isFetching} volume={volume} />

@@ -1,9 +1,8 @@
 import { Volume, VolumeState } from "@/api/types";
 import { SheetFooter } from "./shadcn/sheet";
 import { Button } from "./shadcn/button";
-import { Edit2Icon, EditIcon, PlusIcon, ShoppingCartIcon, TrashIcon } from "lucide-react";
+import { Edit2Icon, ShoppingCartIcon, TrashIcon } from "lucide-react";
 import dayjs from 'dayjs';
-import { SimpleTooltip } from "./ui/SimpleTooltip";
 import { useUpdateVolumeMutation } from "@/hooks/mutation/useUpdateVolume";
 import { VolumePreviewSkeleton } from "./VolumePreviewSkeleton";
 import { Badge } from "./shadcn/badge";
@@ -14,6 +13,7 @@ import { useState } from "react";
 import { CalendarPopover } from "./ui/CalendarPopover";
 
 type VolumePreviewProps = {
+  className?: string;
   isLoading?: boolean;
   onDelete?: () => void;
   volume?: Volume;
@@ -21,7 +21,7 @@ type VolumePreviewProps = {
 
 type UpdatedProperty = 'state' | 'published_at' | null;
 
-export const VolumePreview: React.FC<VolumePreviewProps> = ({ 
+export const VolumePreview: React.FC<VolumePreviewProps> = ({
   isLoading,
   onDelete,
   volume 
@@ -34,24 +34,6 @@ export const VolumePreview: React.FC<VolumePreviewProps> = ({
 
   const isUpdatePending = (property: UpdatedProperty) => {
     return updateVolume.isPending && updatedProperty === property;
-  }
-
-  const updateVolumeDetail = async (property: UpdatedProperty, value: string) => {
-    if (!volume || volume[property as keyof Volume] === value) {
-      return;
-    }
-
-    setUpdatedProperty(property);
-
-    try {
-      await updateVolume.mutateAsync({ id: volume.id, [property as keyof Volume]: value });
-      toast.success(`Volume ${property} updated successfully`);
-    } catch (error) {
-      console.error(`Error updating volume ${property}:`, error);
-      toast.error(`Failed to update volume ${property}`);
-    } finally {
-      setUpdatedProperty(null);
-    }
   }
 
   const handleSelectState = async (state: VolumeState) => {
@@ -97,7 +79,7 @@ export const VolumePreview: React.FC<VolumePreviewProps> = ({
       <VolumePreviewSkeleton />
     )
   }
-
+  
   return (
     <>
       <div className="flex flex-1 flex-col gap-8 p-4 overflow-y-auto">
@@ -109,29 +91,29 @@ export const VolumePreview: React.FC<VolumePreviewProps> = ({
             <Badge>Comedy</Badge>
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div className="flex items-center justify-between gap-4">
-          <span className="font-semibold uppercase">Status</span>
-          <div className="flex items-center justify-start gap-2">
-            <Badge className="capitalize">{volume?.state}</Badge>
-            <VolumeStateDropdown
-              currentState={volume?.state as VolumeState}
-              isLoading={isUpdatePending('state')}
-              onSelect={handleSelectState}
-            />
+            <span className="font-semibold uppercase">Status</span>
+            <div className="flex items-center justify-start gap-2">
+              <Badge className="capitalize">{volume?.state}</Badge>
+              <VolumeStateDropdown
+                currentState={volume?.state as VolumeState}
+                isLoading={isUpdatePending('state')}
+                onSelect={handleSelectState}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <span className="font-semibold uppercase">Published</span>
-          <div className="flex items-center justify-start gap-2">
-            <span>{formattedPublishedAt}</span>
-            <CalendarPopover
-              isLoading={isUpdatePending('published_at')}
-              onSelectDate={handleSelectDate}
-              selectedDate={volume?.published_at ? dayjs(volume.published_at).toDate() : undefined}
-            />
+          <div className="flex items-center justify-between gap-4">
+            <span className="font-semibold uppercase">Published</span>
+            <div className="flex items-center justify-start gap-2">
+              <span>{formattedPublishedAt}</span>
+              <CalendarPopover
+                isLoading={isUpdatePending('published_at')}
+                onSelectDate={handleSelectDate}
+                selectedDate={volume?.published_at ? dayjs(volume.published_at).toDate() : undefined}
+              />
+            </div>
           </div>
-        </div>
         </div>
 
         <div className="space-y-2">
